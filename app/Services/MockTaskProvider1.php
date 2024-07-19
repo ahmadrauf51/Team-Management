@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Log;
 
 class MockTaskProvider1 implements TaskProviderInterface
 {
-    protected $url = 'https://github.com/WEG-Technology/mock.git/provider1';
+    // Api end point
+    protected $url = '';
 
     public function fetchTasks(): array
     {

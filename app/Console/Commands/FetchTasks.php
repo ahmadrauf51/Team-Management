@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Task;
 use App\Services\MockTaskProvider1;
 use App\Services\MockTaskProvider2;
-use App\Services\TaskAllocator;
 use Illuminate\Console\Command;
 
 class FetchTasks extends Command
@@ -26,35 +25,32 @@ class FetchTasks extends Command
 
 
     protected $providers;
-    protected $allocator;
 
-    public function __construct(MockTaskProvider1 $provider1, MockTaskProvider2 $provider2, TaskAllocator $allocator)
+    public function __construct(MockTaskProvider1 $provider1, MockTaskProvider2 $provider2)
     {
         parent::__construct();
         $this->providers = [$provider1, $provider2];
-        $this->allocator = $allocator;
     }
-
-
-
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $this->info('Starting fetching');
         foreach ($this->providers as $provider) {
+            $this->info('Getting Providers');
             $tasks = $provider->fetchTasks();
+            $this->info('Tasks fetched');
             foreach ($tasks as $task) {
+                $this->info('Creating Tasks');
                 Task::create([
                     'name' => $task['name'],
                     'duration' => $task['duration'],
                     'difficulty' => $task['difficulty'],
                 ]);
+                $this->info('Created Task');
             }
         }
-
-        $this->allocator->allocateTasks();
-
         $this->info('Tasks fetched and saved successfully.');
     }
 }
